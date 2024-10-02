@@ -1,0 +1,27 @@
+네이버 20210101부터 20240601까지 증권 뉴스 모두 크롤링하기
+
+연도별로 폴더 작성
+연도별 폴더 내에는 월별 폴더 작성
+월별 폴더 내에는 각 날짜에 해당하는 기사를 JSON파일 형식으로 저장
+
+각 기사 크롤링 방법
+
+1. BASE_URL = https://finance.naver.com/news/news_list.naver?mode=LSS3D&section_id=101&section_id2=258&section_id3=401&date={target_date}&page=${target_page_num}
+1.1 상기 도메인에 대해, 20210101~20240601까지 target_date
+1.2 target_page_num에 대해, i=1부터 시작해 i++ 하되 newsList top 안에 있는 <dl>태그의 하위요소가 없다면 date_text를 다음날짜로 넘김
+
+2. 상기 규칙에 따라 정의한 url에 대해 re.get(BASE_URL)로 우선 정보만 긁어오기
+2.1 URL 내부에, <li class="newsList top"></li> 안에 있는 <dd class="articleSubject"></dd>의 자식요소 중 <a></a> 태그의 href만 추출하여 리스트에 저장
+2.2 리스트에 저장한 href에 대해 re.get(ARTICLE_URL)하고,
+2.3 상기 결과 중 
+- 기사 제목 (class="media_end_head_headline")
+- 작성 날짜 (class="media_end_head_info_datestamp_time _ARTICLE_DATE_TIME")
+- 기사 본문 내용 중 (class="go_trans _article_content")
+    - 3줄 요약 (class="media_end_summary")
+    - 그 외 innerText들
+- 만약 기사 본문 내용 중 <span stockcode=""></span> 이 있다면 별도 리스트에 저장
+2.4 ARTICLE_URL들에 대해 크롤링이 끝나면 href 저장한 리스트 비워주기
+2.5 json파일에 각 내용에 대해 저장해두기
+2.6 target_page_num에 대해 i++ 해주기
+
+3.1 만약 1.2 조건에 따라 다음 날짜로 넘겨야 한다면 새로운 json파일 생성하기

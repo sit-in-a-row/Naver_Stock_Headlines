@@ -1,0 +1,2 @@
+https://github.com/ukairia777/finance_sentiment_corpus/blob/main/finance_data.csv
+-> 한국어 금융 감성분석 데이터셋
